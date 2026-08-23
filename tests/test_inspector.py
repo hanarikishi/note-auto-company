@@ -5,13 +5,16 @@ from agents.inspector import inspect_article, save_final
 
 
 def test_inspect_article_returns_revised_text():
+    # spec=[] でthinkingブロックをシミュレート（.textを持たない）
+    mock_thinking = MagicMock(spec=[])
+    mock_text = MagicMock(text="修正後の本文\n\n体温のある文章になりました")
     mock_response = MagicMock()
-    mock_response.content = [MagicMock(text="修正後の本文\n\n体温のある文章になりました")]
+    mock_response.content = [mock_thinking, mock_text]
     mock_client = MagicMock()
     mock_client.messages.create.return_value = mock_response
 
     result = inspect_article("AIっぽい文章です。〜となっています。", mock_client)
-    assert "修正後の本文" in result
+    assert result == "修正後の本文\n\n体温のある文章になりました"
     mock_client.messages.create.assert_called_once()
 
 
