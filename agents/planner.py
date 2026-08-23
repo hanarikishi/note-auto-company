@@ -11,6 +11,8 @@ CONFIG = yaml.safe_load(Path("config.yml").read_text(encoding="utf-8"))
 
 def load_research_history(research_dir: Path) -> list[dict]:
     """過去の全リサーチJSONを読み込む。"""
+    if not research_dir.exists():
+        return []
     articles = []
     for json_file in sorted(research_dir.glob("*.json")):
         data = json.loads(json_file.read_text(encoding="utf-8"))
