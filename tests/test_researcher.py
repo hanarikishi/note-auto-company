@@ -31,3 +31,44 @@ def test_save_research_creates_json(tmp_path):
     assert output_path.exists()
     saved = json.loads(output_path.read_text(encoding="utf-8"))
     assert saved[0]["title"] == "test"
+
+
+def test_parse_int_handles_plain_number():
+    from agents.researcher import _parse_int
+    assert _parse_int("120") == 120
+
+
+def test_parse_int_handles_empty():
+    from agents.researcher import _parse_int
+    assert _parse_int("") == 0
+
+
+def test_parse_int_handles_mixed():
+    from agents.researcher import _parse_int
+    assert _parse_int("1,234件") == 1234
+
+
+def test_analyze_longevity_fallback_on_title_mismatch():
+    articles = [{"title": "マッチしないタイトル", "likes": 10, "url": "/x", "price": 500}]
+    mock_response = MagicMock()
+    mock_response.content = [MagicMock(text=json.dumps([
+        {"title": "全く別のタイトル", "longevity_score": 9.0, "reason": "テスト"}
+    ]))]
+    mock_client = MagicMock()
+    mock_client.messages.create.return_value = mock_response
+
+    result = analyze_longevity(articles, mock_client)
+    assert result[0]["longevity_score"] == 5.0
+    assert result[0]["longevity_reason"] == "評価不明"
+
+
+def test_analyze_longevity_handles_invalid_json():
+    articles = [{"title": "テスト記事", "likes": 5, "url": "/y", "price": 500}]
+    mock_response = MagicMock()
+    mock_response.content = [MagicMock(text="これはJSONではありません")]
+    mock_client = MagicMock()
+    mock_client.messages.create.return_value = mock_response
+
+    result = analyze_longevity(articles, mock_client)
+    # エラーで落ちず、フォールバック値が設定されること
+    assert result[0]["longevity_score"] == 5.0

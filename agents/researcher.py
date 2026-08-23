@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import date
 from pathlib import Path
 
@@ -69,7 +70,13 @@ def analyze_longevity(articles: list[dict], client: anthropic.Anthropic) -> list
         }],
     )
 
-    scores = json.loads(response.content[0].text)
+    raw = response.content[0].text
+    # マークダウンフェンスを除去して JSON 部分を抽出
+    match = re.search(r'\[.*\]', raw, re.DOTALL)
+    try:
+        scores = json.loads(match.group() if match else raw)
+    except json.JSONDecodeError:
+        scores = []
     score_map = {s["title"]: s for s in scores}
 
     for article in articles:
