@@ -17,9 +17,8 @@ def load_top_proposal(proposals_text: str) -> dict:
         r"### 1位: (.+?)\n"
         r"- \*\*想定読者\*\*: (.+?)\n"
         r"- \*\*無料部分で見せること\*\*: (.+?)\n"
-        r"- \*\*有料部分で解決すること\*\*: (.+?)\n",
+        r"- \*\*有料部分で解決すること\*\*: (.+?)(?:\n|$)",
         proposals_text,
-        re.DOTALL,
     )
     if not match:
         raise ValueError("proposals.mdから1位のテーマを抽出できませんでした")
@@ -61,7 +60,7 @@ def write_article(proposal: dict, client: anthropic.Anthropic) -> str:
     for block in reversed(response.content):
         if hasattr(block, "text"):
             return block.text
-    return response.content[-1].text
+    raise RuntimeError("テキストブロックが見つかりませんでした")
 
 
 def save_draft(content: str, output_dir: Path) -> Path:
@@ -73,6 +72,8 @@ def save_draft(content: str, output_dir: Path) -> Path:
 
 def main():
     plans_dir = Path("plans")
+    if not plans_dir.exists():
+        raise FileNotFoundError("plans/ ディレクトリが存在しません")
     proposals_files = sorted(plans_dir.glob("*-proposals.md"))
     if not proposals_files:
         raise FileNotFoundError("plans/ にproposals.mdが見つかりません")

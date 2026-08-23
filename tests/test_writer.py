@@ -38,13 +38,16 @@ def test_write_article_calls_claude():
         "paid_content": "具体的な0→1万円のステップと失敗回避ポイント",
         "target_reader": "副業を始めたいが何から手を付ければいいかわからない会社員",
     }
+    # spec=[] でthinkingブロックをシミュレート（.textを持たない）
+    mock_thinking = MagicMock(spec=[])
+    mock_text = MagicMock(text="記事本文テスト" * 100)
     mock_response = MagicMock()
-    mock_response.content = [MagicMock(text="記事本文テスト" * 100)]
+    mock_response.content = [mock_thinking, mock_text]
     mock_client = MagicMock()
     mock_client.messages.create.return_value = mock_response
 
     result = write_article(proposal, mock_client)
-    assert len(result) > 100
+    assert result == "記事本文テスト" * 100
     mock_client.messages.create.assert_called_once()
 
 
