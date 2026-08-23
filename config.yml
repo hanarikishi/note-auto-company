@@ -1,0 +1,27 @@
+research:
+  target_price: 500
+  max_pages: 3
+  longevity_threshold: 6.0
+
+writing:
+  target_chars_min: 4000
+  target_chars_max: 5000
+  free_section_chars: 1500
+
+ng_words:
+  - "〜となっています"
+  - "〜することができます"
+  - "〜と言えるでしょう"
+  - "〜ではないでしょうか"
+  - "重要なポイントは"
+  - "まとめると"
+
+canva:
+  cover_template_id: ""
+  social_template_id: ""
+  cover_size: [1280, 670]
+  social_size: [1200, 1200]
+
+x_post:
+  patterns: ["告知", "共感", "引用", "ネタバレなし"]
+  total_posts: 30
