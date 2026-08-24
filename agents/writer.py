@@ -50,6 +50,7 @@ def write_article(proposal: dict, client: anthropic.Anthropic) -> str:
                 f"## 記事スタイル\n"
                 f"- 一人称は「私」または「ぼく」\n"
                 f"- 読者に語りかける口調（です・ます調）\n"
+                f"- 文体: {CONFIG['author']['tone']}\n"
                 f"- 体験談・失敗談を交える\n"
                 f"- 無料/有料の境界には「---ここから有料---」を挿入\n\n"
                 f"記事本文のみを出力してください（タイトルは含めない）。"

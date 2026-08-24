@@ -25,3 +25,9 @@ canva:
 x_post:
   patterns: ["告知", "共感", "引用", "ネタバレなし"]
   total_posts: 30
+
+author:
+  genre: ""              # 得意ジャンル（例: 副業・お金・転職）
+  target_reader: ""      # ターゲット読者（例: 20〜30代の会社員）
+  tone: "データ重視、数字で示す、根拠ベース"
+  strengths: ""          # 強み・実績（例: 副業で月5万達成）
